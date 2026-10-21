@@ -75,3 +75,22 @@ Scan the QR code with Expo Go. If bundling fails, fix errors before validating.
 
 Fill in each "(Expect: pass/fail)" line with the real observed outcome and
 date. Only state that checks passed if they were actually executed on a device.
+
+## Status de validação (2026-10-21)
+
+Estado atual: **validação manual em dispositivo PENDENTE** (T010, T015, T019,
+T021 permanecem abertas — exigem um aparelho físico com Expo Go).
+
+Verificações automatizadas já executadas:
+
+| Verificação | Comando | Resultado |
+|-------------|---------|-----------|
+| TypeScript estrito | `npx tsc --noEmit` | 0 erros |
+| Imports/variáveis não utilizados | `npx tsc --noEmit --noUnusedLocals --noUnusedParameters` | 0 avisos |
+| Diagnóstico do SDK | `npx expo-doctor` | 20/20 checks OK |
+| Bundle Metro (Android) | `npx expo export --platform android` | 870 módulos, sem erro de bundling |
+
+O bundle Android é gerado com sucesso, o que indica que o app carrega no Expo
+Go sem erro de bundling — mas **não substitui** a execução manual: ordem das
+telas, gestos, `Alert` de confirmação, persistência após reinício e o
+comportamento do `FlatList` ainda precisam ser observados no aparelho.

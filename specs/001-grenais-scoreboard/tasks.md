@@ -102,9 +102,9 @@ description: "Task list for Aplicativo de Placar de Gre-Nais"
 
 ### Implementation for User Story 4
 
-- [ ] T016 [P] [US4] Create `src/screens/HistoricoScreen.tsx`: `useState` for `carregando | erro | dados`, `useEffect` load calling `carregarHistorico()`, `FlatList` with `keyExtractor={item => item.id}` rendering teams + score + `toLocaleDateString('pt-BR')`, empty-state message when the list is empty, error message with `Tentar novamente` button, `ActivityIndicator` while loading (depends on T005)
-- [ ] T017 [US4] Extend `src/navigation/types.ts` (`Historico: undefined` in `RootStackParamList`) and `src/navigation/AppNavigator.tsx` (register the `Historico` screen) (depends on T016)
-- [ ] T018 [US4] Extend `src/screens/IniciarPartidaScreen.tsx`: add a `Ver histórico` `Pressable` navigating to `Historico` (depends on T017)
+- [X] T016 [P] [US4] Create `src/screens/HistoricoScreen.tsx`: `useState` for `carregando | erro | dados`, `useEffect` load calling `carregarHistorico()`, `FlatList` with `keyExtractor={item => item.id}` rendering teams + score + `toLocaleDateString('pt-BR')`, empty-state message when the list is empty, error message with `Tentar novamente` button, `ActivityIndicator` while loading (depends on T005)
+- [X] T017 [US4] Extend `src/navigation/types.ts` (`Historico: undefined` in `RootStackParamList`) and `src/navigation/AppNavigator.tsx` (register the `Historico` screen) (depends on T016)
+- [X] T018 [US4] Extend `src/screens/IniciarPartidaScreen.tsx`: add a `Ver histórico` `Pressable` navigating to `Historico` (depends on T017)
 - [ ] T019 [US4] Manually validate US04 per quickstart §US04 (empty-state message; finalize two matches with different scores → newest first; force-close and reopen → records persist; FlatList rows render) and record actual results
 
 **Checkpoint**: All four stories independently functional; US04's restart check also closes US03's persistence criterion
@@ -115,9 +115,9 @@ description: "Task list for Aplicativo de Placar de Gre-Nais"
 
 **Purpose**: Final verification and cleanup across all stories
 
-- [ ] T020 [P] Run `npx tsc --noEmit` one final time and fix any type errors; remove unused imports or dead code under `src/` and `App.tsx`
+- [X] T020 [P] Run `npx tsc --noEmit` one final time and fix any type errors; remove unused imports or dead code under `src/` and `App.tsx`
 - [ ] T021 Execute the full `specs/001-grenais-scoreboard/quickstart.md` walkthrough in Expo Go (all four US sections + navigation sweep) and record every actual result honestly — do not claim any check passed without performing it on a device
-- [ ] T022 [P] Audit scope and Constitution conformance: exactly the five approved dependencies in `package.json`, no out-of-scope features, no `any` or `@ts-ignore` anywhere in `src/`
+- [X] T022 [P] Audit scope and Constitution conformance: exactly the five approved dependencies in `package.json`, no out-of-scope features, no `any` or `@ts-ignore` anywhere in `src/`
 
 ---
 
@@ -195,3 +195,13 @@ Task: "Create src/navigation/AppNavigator.tsx + App.tsx"
 - Stop at any checkpoint to validate a story independently
 - Avoid: vague tasks, same-file conflicts, cross-story dependencies that break independence
 - `TextInput` is intentionally absent: the spec defines no free-text field (see research.md R6)
+
+### Pending device validation
+
+T010, T015, T019 and T021 remain **unchecked** — they are manual checks that
+require a physical device running Expo Go (Constitution IX: no check may be
+reported as passed without being executed). Verified statically on
+2026-10-21 instead: `npx tsc --noEmit` (0 errors, 0 unused),
+`npx expo-doctor` (20/20), and `npx expo export --platform android`
+(870 modules, no bundling error). See the "Status de validação" section in
+quickstart.md.

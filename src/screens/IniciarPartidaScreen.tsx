@@ -49,6 +49,10 @@ export default function IniciarPartidaScreen({ navigation }: Props) {
       <Pressable onPress={iniciarPartida} style={styles.botao}>
         <Text style={styles.botaoTexto}>Iniciar partida</Text>
       </Pressable>
+
+      <Pressable onPress={() => navigation.navigate('Historico')} style={styles.botaoSecundario}>
+        <Text style={styles.botaoSecundarioTexto}>Ver histórico</Text>
+      </Pressable>
     </View>
   );
 }
@@ -105,6 +109,19 @@ const styles = StyleSheet.create({
   },
   botaoTexto: {
     color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  botaoSecundario: {
+    borderWidth: 2,
+    borderColor: '#006633',
+    borderRadius: 8,
+    padding: 16,
+    alignItems: 'center',
+    marginTop: 12,
+  },
+  botaoSecundarioTexto: {
+    color: '#006633',
     fontSize: 18,
     fontWeight: 'bold',
   },

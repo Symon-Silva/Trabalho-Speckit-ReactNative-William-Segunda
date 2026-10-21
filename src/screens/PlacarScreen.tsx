@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import Dialogo, { type BotaoDialogo } from '../components/Dialogo';
 import PlacarTime from '../components/PlacarTime';
 import type { RootStackParamList } from '../navigation/types';
 import { salvarPartida } from '../services/storage';
@@ -11,42 +12,60 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Placar'>;
 
 const placarInicial: Record<Equipe, number> = { Grêmio: 0, Internacional: 0 };
 
+interface DialogoEstado {
+  titulo: string;
+  mensagem?: string;
+  botoes: BotaoDialogo[];
+}
+
 export default function PlacarScreen({ navigation, route }: Props) {
   const { mandante } = route.params;
   const [gols, setGols] = useState<Record<Equipe, number>>(placarInicial);
+  const [dialogo, setDialogo] = useState<DialogoEstado | null>(null);
 
   const adicionarGol = (equipe: Equipe) => {
     setGols((prev) => ({ ...prev, [equipe]: prev[equipe] + 1 }));
   };
 
+  const salvarResultado = async () => {
+    const partida: Partida = {
+      id: String(Date.now()),
+      mandante,
+      gols,
+      finalizadaEm: new Date().toISOString(),
+    };
+    try {
+      await salvarPartida(partida);
+      setDialogo({
+        titulo: 'Partida salva',
+        mensagem: 'Resultado registrado no histórico.',
+        botoes: [
+          {
+            texto: 'OK',
+            aoPressionar: () => {
+              navigation.reset({ index: 0, routes: [{ name: 'Iniciar' }] });
+            },
+          },
+        ],
+      });
+    } catch {
+      setDialogo({
+        titulo: 'Erro',
+        mensagem: 'Não foi possível salvar a partida. Tente novamente.',
+        botoes: [{ texto: 'OK' }],
+      });
+    }
+  };
+
   const finalizarPartida = () => {
-    Alert.alert('Finalizar partida', 'Deseja encerrar e salvar o resultado?', [
-      { text: 'Cancelar', style: 'cancel' },
-      {
-        text: 'Finalizar',
-        onPress: async () => {
-          const partida: Partida = {
-            id: String(Date.now()),
-            mandante,
-            gols,
-            finalizadaEm: new Date().toISOString(),
-          };
-          try {
-            await salvarPartida(partida);
-            Alert.alert('Partida salva', 'Resultado registrado no histórico.', [
-              {
-                text: 'OK',
-                onPress: () => {
-                  navigation.reset({ index: 0, routes: [{ name: 'Iniciar' }] });
-                },
-              },
-            ]);
-          } catch {
-            Alert.alert('Erro', 'Não foi possível salvar a partida. Tente novamente.');
-          }
-        },
-      },
-    ]);
+    setDialogo({
+      titulo: 'Finalizar partida',
+      mensagem: 'Deseja encerrar e salvar o resultado?',
+      botoes: [
+        { texto: 'Cancelar', variante: 'secundario' },
+        { texto: 'Finalizar', aoPressionar: () => void salvarResultado() },
+      ],
+    });
   };
 
   return (
@@ -66,6 +85,14 @@ export default function PlacarScreen({ navigation, route }: Props) {
       <Pressable onPress={finalizarPartida} style={styles.botaoFinalizar}>
         <Text style={styles.botaoFinalizarTexto}>Finalizar partida</Text>
       </Pressable>
+
+      <Dialogo
+        visivel={dialogo !== null}
+        titulo={dialogo?.titulo ?? ''}
+        mensagem={dialogo?.mensagem}
+        botoes={dialogo?.botoes ?? []}
+        aoFechar={() => setDialogo(null)}
+      />
     </View>
   );
 }
