@@ -1,9 +1,12 @@
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Modal, StyleSheet, Text, View } from 'react-native';
+
+import Botao, { type VarianteBotao } from './Botao';
+import { cores, espacamentos, raios, sombra, tipografia } from '../theme';
 
 export interface BotaoDialogo {
   texto: string;
   aoPressionar?: () => void;
-  variante?: 'primario' | 'secundario';
+  variante?: VarianteBotao;
 }
 
 interface DialogoProps {
@@ -19,27 +22,20 @@ export default function Dialogo({ visivel, titulo, mensagem, botoes, aoFechar }:
     <Modal visible={visivel} transparent animationType="fade" onRequestClose={aoFechar}>
       <View style={styles.fundo}>
         <View style={styles.caixa}>
+          <View style={styles.faixa} />
           <Text style={styles.titulo}>{titulo}</Text>
           {mensagem ? <Text style={styles.mensagem}>{mensagem}</Text> : null}
           <View style={styles.botoes}>
             {botoes.map((botao) => (
-              <Pressable
+              <Botao
                 key={botao.texto}
-                onPress={() => {
+                titulo={botao.texto}
+                aoPressionar={() => {
                   aoFechar();
                   botao.aoPressionar?.();
                 }}
-                style={[styles.botao, botao.variante === 'secundario' && styles.botaoSecundario]}
-              >
-                <Text
-                  style={[
-                    styles.botaoTexto,
-                    botao.variante === 'secundario' && styles.botaoSecundarioTexto,
-                  ]}
-                >
-                  {botao.texto}
-                </Text>
-              </Pressable>
+                variante={botao.variante}
+              />
             ))}
           </View>
         </View>
@@ -51,51 +47,39 @@ export default function Dialogo({ visivel, titulo, mensagem, botoes, aoFechar }:
 const styles = StyleSheet.create({
   fundo: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: cores.overlay,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 24,
+    padding: espacamentos.xl,
   },
   caixa: {
     width: '100%',
     maxWidth: 420,
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 24,
+    backgroundColor: cores.superficie,
+    borderRadius: raios.lg,
+    padding: espacamentos.xl,
+    overflow: 'hidden',
+    ...sombra.cartao,
+  },
+  faixa: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 5,
+    backgroundColor: cores.primaria,
   },
   titulo: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#000',
-    marginBottom: 8,
+    ...tipografia.titulo,
+    marginBottom: espacamentos.sm,
   },
   mensagem: {
-    fontSize: 16,
-    color: '#555',
-    marginBottom: 16,
+    ...tipografia.subtitulo,
+    marginBottom: espacamentos.xl,
   },
   botoes: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    gap: 12,
-  },
-  botao: {
-    backgroundColor: '#006633',
-    borderRadius: 8,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-  },
-  botaoSecundario: {
-    backgroundColor: '#fff',
-    borderWidth: 2,
-    borderColor: '#006633',
-  },
-  botaoTexto: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  botaoSecundarioTexto: {
-    color: '#006633',
+    gap: espacamentos.md,
   },
 });

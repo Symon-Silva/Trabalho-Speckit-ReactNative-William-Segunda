@@ -76,10 +76,14 @@ src/
 │   ├── PlacarScreen.tsx
 │   └── HistoricoScreen.tsx
 ├── components/
-│   └── PlacarTime.tsx         # Reused by both teams' score columns
+│   ├── PlacarTime.tsx         # Reused by both teams' score columns
+│   ├── Botao.tsx              # Shared button (primary/outline/soft variants)
+│   └── Dialogo.tsx            # Cross-platform modal (works on native and web)
 ├── navigation/
 │   ├── AppNavigator.tsx       # NavigationContainer + native stack
 │   └── types.ts               # RootStackParamList
+├── theme/
+│   └── index.ts               # Design tokens: colors, spacing, radii, type, shadows
 ├── types/
 │   └── index.ts               # Equipe, Partida, PartidaAtiva
 └── services/
@@ -99,3 +103,20 @@ created just to increase file count).
 ## Complexity Tracking
 
 > No Constitution Check violations — table intentionally empty.
+
+## Revision: UI/UX Restyle (2026-10-21)
+
+Requested after US1–US4 were implemented. **Presentation-only change**: no
+business rule, navigation flow, data model or dependency was altered.
+
+| Change | Justification | Constitution |
+|--------|---------------|--------------|
+| `src/theme/index.ts` (new) | Single source of truth for colors, spacing, radii, type scale and shadows — replaces 9 hardcoded hex values and arbitrary spacing scattered across 6 files | II (reutilização), I (clareza) |
+| `src/components/Botao.tsx` (new) | One button component reused in 4 places (iniciar, histórico, finalizar, dialog) instead of 4 duplicated `Pressable` blocks | II (reutilização) |
+| `src/components/Dialogo.tsx` | `Alert.alert` is a no-op in `react-native-web`; a `Modal`-based dialog keeps the finalize flow identical on native and web | IV (sem lib nova), I |
+| Safe-area handling | `SafeAreaProvider` + `SafeAreaView` (already-approved `react-native-safe-area-context`) so content respects notches and the home indicator | VI (interface) |
+| Screen restyle | Real scoreboard layout (no duplicated score), radio-style team selection, card-based history rows, structured empty/error states, pressed states on every control | VI (interface) |
+
+**No new dependencies** were added — `expo-doctor` still reports 20/20 and the
+dependency set is unchanged.
+

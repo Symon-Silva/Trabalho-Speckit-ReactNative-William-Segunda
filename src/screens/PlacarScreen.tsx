@@ -1,16 +1,17 @@
-import { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Fragment, useState } from 'react';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import Botao from '../components/Botao';
 import Dialogo, { type BotaoDialogo } from '../components/Dialogo';
 import PlacarTime from '../components/PlacarTime';
 import type { RootStackParamList } from '../navigation/types';
 import { salvarPartida } from '../services/storage';
-import { EQUIPES, type Equipe, type Partida } from '../types';
+import { cores, espacamentos, raios, sombra, tipografia } from '../theme';
+import type { Partida } from '../types';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Placar'>;
-
-const placarInicial: Record<Equipe, number> = { Grêmio: 0, Internacional: 0 };
 
 interface DialogoEstado {
   titulo: string;
@@ -19,18 +20,21 @@ interface DialogoEstado {
 }
 
 export default function PlacarScreen({ navigation, route }: Props) {
-  const { mandante } = route.params;
-  const [gols, setGols] = useState<Record<Equipe, number>>(placarInicial);
+  const { participantes } = route.params;
+  const [gols, setGols] = useState<Record<string, number>>({
+    [participantes[0].id]: 0,
+    [participantes[1].id]: 0,
+  });
   const [dialogo, setDialogo] = useState<DialogoEstado | null>(null);
 
-  const adicionarGol = (equipe: Equipe) => {
-    setGols((prev) => ({ ...prev, [equipe]: prev[equipe] + 1 }));
+  const adicionarGol = (id: string) => {
+    setGols((prev) => ({ ...prev, [id]: (prev[id] ?? 0) + 1 }));
   };
 
   const salvarResultado = async () => {
     const partida: Partida = {
       id: String(Date.now()),
-      mandante,
+      participantes,
       gols,
       finalizadaEm: new Date().toISOString(),
     };
@@ -62,29 +66,45 @@ export default function PlacarScreen({ navigation, route }: Props) {
       titulo: 'Finalizar partida',
       mensagem: 'Deseja encerrar e salvar o resultado?',
       botoes: [
-        { texto: 'Cancelar', variante: 'secundario' },
+        { texto: 'Cancelar', variante: 'contorno' },
         { texto: 'Finalizar', aoPressionar: () => void salvarResultado() },
       ],
     });
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.mandante}>{mandante} (mandante)</Text>
-      <Text style={styles.placar}>
-        {gols['Grêmio']} a {gols['Internacional']}
-      </Text>
-      {EQUIPES.map((equipe) => (
-        <PlacarTime
-          key={equipe}
-          equipe={equipe}
-          gols={gols[equipe]}
-          onAdicionarGol={() => adicionarGol(equipe)}
-        />
-      ))}
-      <Pressable onPress={finalizarPartida} style={styles.botaoFinalizar}>
-        <Text style={styles.botaoFinalizarTexto}>Finalizar partida</Text>
-      </Pressable>
+    <SafeAreaView style={styles.container} edges={['bottom']}>
+      <ScrollView contentContainerStyle={styles.conteudo} showsVerticalScrollIndicator={false}>
+        <View style={styles.mandanteCartao}>
+          <Text style={styles.mandanteRotulo}>Confronto</Text>
+          <Text style={styles.mandante} numberOfLines={1}>
+            {participantes[0].nome} x {participantes[1].nome}
+          </Text>
+        </View>
+
+        <View style={styles.placarCartao}>
+          <View style={styles.placar}>
+            {participantes.map((participante, indice) => (
+              <Fragment key={participante.id}>
+                {indice > 0 ? (
+                  <View style={styles.separador}>
+                    <Text style={styles.separadorTexto}>a</Text>
+                  </View>
+                ) : null}
+                <PlacarTime
+                  participante={participante}
+                  gols={gols[participante.id] ?? 0}
+                  onAdicionarGol={() => adicionarGol(participante.id)}
+                />
+              </Fragment>
+            ))}
+          </View>
+        </View>
+
+        <View style={styles.acoes}>
+          <Botao titulo="Finalizar partida" aoPressionar={finalizarPartida} largo />
+        </View>
+      </ScrollView>
 
       <Dialogo
         visivel={dialogo !== null}
@@ -93,38 +113,60 @@ export default function PlacarScreen({ navigation, route }: Props) {
         botoes={dialogo?.botoes ?? []}
         aoFechar={() => setDialogo(null)}
       />
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: cores.fundo,
+  },
+  conteudo: {
+    flexGrow: 1,
+    padding: espacamentos.xl,
+    paddingBottom: espacamentos.xxl,
+  },
+  mandanteCartao: {
     alignItems: 'center',
-    justifyContent: 'center',
-    padding: 24,
+    backgroundColor: cores.superficie,
+    borderRadius: raios.lg,
+    paddingVertical: espacamentos.lg,
+    paddingHorizontal: espacamentos.lg,
+    marginBottom: espacamentos.lg,
+    ...sombra.baixa,
+  },
+  mandanteRotulo: {
+    ...tipografia.rotulo,
+    marginBottom: espacamentos.xs,
   },
   mandante: {
-    fontSize: 18,
-    color: '#555',
-    marginBottom: 8,
+    ...tipografia.titulo,
+    textAlign: 'center',
+  },
+  placarCartao: {
+    backgroundColor: cores.superficie,
+    borderRadius: raios.lg,
+    paddingVertical: espacamentos.xl,
+    paddingHorizontal: espacamentos.lg,
+    marginBottom: espacamentos.xl,
+    ...sombra.cartao,
   },
   placar: {
-    fontSize: 40,
-    fontWeight: 'bold',
-    marginBottom: 32,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  botaoFinalizar: {
-    marginTop: 24,
-    backgroundColor: '#B00020',
-    borderRadius: 8,
-    paddingHorizontal: 24,
-    paddingVertical: 12,
+  separador: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: espacamentos.md,
   },
-  botaoFinalizarTexto: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+  separadorTexto: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: cores.bordaForte,
+  },
+  acoes: {
+    gap: espacamentos.md,
   },
 });

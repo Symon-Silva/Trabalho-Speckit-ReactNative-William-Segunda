@@ -121,6 +121,22 @@ description: "Task list for Aplicativo de Placar de Gre-Nais"
 
 ---
 
+## Phase 8: UI/UX Restyle (2026-10-21)
+
+**Purpose**: Interface visual overhaul requested after US1–US4. Presentation
+only — no business rule, navigation flow or dependency changed.
+
+- [X] T023 Create the design tokens in `src/theme/index.ts` (colors, spacing scale, radii, type scale, shadows) and replace every hardcoded value in `src/` and `App.tsx`
+- [X] T024 Create the shared `src/components/Botao.tsx` (variants `primario` / `contorno` / `suave`, pressed state) and reuse it in every screen and in `Dialogo`
+- [X] T025 Restyle `src/components/PlacarTime.tsx` as a scoreboard column (avatar, uppercase team label, oversized score, pill `+1` control) and `src/components/Dialogo.tsx` (accent bar, card shadow, aligned actions)
+- [X] T026 Restyle `src/screens/IniciarPartidaScreen.tsx`: brand header, card with radio-style team selection, error message in a highlighted box, primary + outline actions
+- [X] T027 Restyle `src/screens/PlacarScreen.tsx`: mandante card, single-row scoreboard (the score is no longer duplicated), separated teams by an `a` divider, `Finalizar partida` as the primary action
+- [X] T028 Restyle `src/screens/HistoricoScreen.tsx`: card rows with avatar and score badge, structured empty state and error state with retry
+- [X] T029 Add safe-area handling (`SafeAreaProvider` in `App.tsx`, `SafeAreaView` in the three screens) and style the navigator header
+- [X] T030 Validate the restyle: `npx tsc --noEmit` (0 errors), `npx expo-doctor` (20/20), `npx expo export` for web and android (both bundle clean)
+
+---
+
 ## Dependencies & Execution Order
 
 ### Phase Dependencies

@@ -1,19 +1,37 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import type { Equipe } from '../types';
+import EscudoTime from './EscudoTime';
+import { cores, espacamentos, raios, sombra, tipografia } from '../theme';
+import type { PartidaParticipante } from '../types';
 
 interface PlacarTimeProps {
-  equipe: Equipe;
+  participante: PartidaParticipante;
   gols: number;
   onAdicionarGol: () => void;
 }
 
-export default function PlacarTime({ equipe, gols, onAdicionarGol }: PlacarTimeProps) {
+export default function PlacarTime({ participante, gols, onAdicionarGol }: PlacarTimeProps) {
   return (
     <View style={styles.container}>
-      <Text style={styles.equipe}>{equipe}</Text>
+      <EscudoTime
+        nome={participante.nome}
+        escudoUrl={participante.escudoUrl}
+        id={participante.id}
+        tamanho={56}
+      />
+
+      <Text style={styles.equipe} numberOfLines={1}>
+        {participante.nome}
+      </Text>
+
       <Text style={styles.gols}>{gols}</Text>
-      <Pressable onPress={onAdicionarGol} style={styles.botao}>
+
+      <Pressable
+        onPress={onAdicionarGol}
+        accessibilityRole="button"
+        accessibilityLabel={`Adicionar gol do ${participante.nome}`}
+        style={({ pressed }) => [styles.botao, pressed && styles.botaoPressionado]}
+      >
         <Text style={styles.botaoTexto}>+1</Text>
       </Pressable>
     </View>
@@ -22,28 +40,41 @@ export default function PlacarTime({ equipe, gols, onAdicionarGol }: PlacarTimeP
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     alignItems: 'center',
-    marginBottom: 24,
   },
   equipe: {
-    fontSize: 20,
-    fontWeight: '600',
-    marginBottom: 4,
+    ...tipografia.rotulo,
+    color: cores.textoSuave,
+    textAlign: 'center',
+    marginTop: espacamentos.sm,
+    marginBottom: espacamentos.xs,
   },
   gols: {
-    fontSize: 48,
-    fontWeight: 'bold',
-    marginBottom: 8,
+    fontSize: 60,
+    fontWeight: '800',
+    letterSpacing: -2,
+    color: cores.texto,
+    lineHeight: 68,
   },
   botao: {
-    backgroundColor: '#006633',
-    borderRadius: 8,
-    paddingHorizontal: 24,
-    paddingVertical: 12,
+    marginTop: espacamentos.md,
+    minWidth: 72,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: cores.primaria,
+    borderRadius: raios.pill,
+    paddingVertical: espacamentos.sm,
+    paddingHorizontal: espacamentos.xl,
+    ...sombra.baixa,
+  },
+  botaoPressionado: {
+    backgroundColor: cores.primariaEscura,
+    transform: [{ scale: 0.94 }],
   },
   botaoTexto: {
-    color: '#fff',
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: '800',
+    color: cores.textoInvertido,
   },
 });
