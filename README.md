@@ -88,3 +88,8 @@ Produza uma especificação funcional clara, com cenários verificáveis e crit�
 
 Essa era a ideia inicial, no começo eram apenas Grêmio e Inter que podiam participar.
 Na hora de criar o time, para a URL funcionar corretamente, é recomendado ir dentro do escudo do time no google e pegar o endereço correto. Exemplo: Para pegar o escudo do gremio: https://upload.wikimedia.org/wikipedia/commons/0/08/Gremio_logo.svg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original
+
+Também foi adicionado durante o projeto a simulação de partidas, onde era possivel adicionar os gols manualmente ou assistir a partida passando de minuto em minuto. 
+
+O video com funcionamento do App está no Classroom
+
