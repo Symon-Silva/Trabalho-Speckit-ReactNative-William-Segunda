@@ -84,6 +84,7 @@ Critérios de aceite:
 
 Produza uma especificação funcional clara, com cenários verificáveis e critérios de aceite objetivos. Preserve as quatro User Stories e suas intenções. Não implemente o aplicativo nesta etapa e não antecipe decisões detalhadas de arquitetura ou dependências, que serão tratadas durante o planejamento.
 
+## Comentários feitos por mim
 
-
-Essa era a ideia inicial, no começo eram apenas Grêmio e Inter que podiam participar
+Essa era a ideia inicial, no começo eram apenas Grêmio e Inter que podiam participar.
+Na hora de criar o time, para a URL funcionar corretamente, é recomendado ir dentro do escudo do time no google e pegar o endereço correto. Exemplo: Para pegar o escudo do gremio: https://upload.wikimedia.org/wikipedia/commons/0/08/Gremio_logo.svg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original
