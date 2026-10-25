@@ -41,10 +41,6 @@ export default function EscudoTime({ nome, escudoUrl, id, tamanho = 40 }: Escudo
     borderRadius: raios.pill,
   };
 
-  if (fontePadrao !== undefined) {
-    return <Image source={fontePadrao} style={[styles.escudo, dimensoes]} resizeMode="contain" />;
-  }
-
   if (temLink && !falhou) {
     return (
       <Image
@@ -54,6 +50,10 @@ export default function EscudoTime({ nome, escudoUrl, id, tamanho = 40 }: Escudo
         onError={() => setFalhou(true)}
       />
     );
+  }
+
+  if (fontePadrao !== undefined) {
+    return <Image source={fontePadrao} style={[styles.escudo, dimensoes]} resizeMode="contain" />;
   }
 
   return (

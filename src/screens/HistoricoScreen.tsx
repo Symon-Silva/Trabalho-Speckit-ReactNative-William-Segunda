@@ -12,7 +12,9 @@ import { useFocusEffect } from '@react-navigation/native';
 
 import Botao from '../components/Botao';
 import EscudoTime from '../components/EscudoTime';
-import { carregarHistorico } from '../services/storage';
+import { carregarHistorico, excluirPartida } from '../services/storage';
+import { Pressable } from 'react-native';
+import Dialogo from '../components/Dialogo';
 import { cores, espacamentos, raios, sombra, tipografia } from '../theme';
 import { ID_PADRAO_GREMIO, ID_PADRAO_INTERNACIONAL, type Partida, type PartidaParticipante } from '../types';
 

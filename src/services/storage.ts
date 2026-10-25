@@ -191,3 +191,16 @@ export async function salvarPartida(partida: Partida): Promise<void> {
   historico.push(partida);
   await AsyncStorage.setItem(CHAVE_HISTORICO, JSON.stringify(historico));
 }
+
+
+export async function excluirPartida(id: string): Promise<void> {
+  const bruto = await AsyncStorage.getItem(CHAVE_HISTORICO);
+  if (bruto === null) { return; }
+  const dados = JSON.parse(bruto);
+  if (!Array.isArray(dados)) { return; }
+  const filtrados = dados.filter((item: any) => {
+    if (typeof item !== " object\ || item === null) { return false; }
+ return item.id !== id;
+ });
+ await AsyncStorage.setItem(CHAVE_HISTORICO, JSON.stringify(filtrados));
+}
