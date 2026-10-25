@@ -19,9 +19,16 @@ export interface PartidaParticipante {
   escudoUrl: string | null;
 }
 
+
+export interface EventoGol {
+  participanteId: string;
+  minuto: number;
+}
+
 export interface Partida {
   id: string;
   participantes: [PartidaParticipante, PartidaParticipante];
   gols: Record<string, number>;
+  eventosGols?: EventoGol[];
   finalizadaEm: string;
 }

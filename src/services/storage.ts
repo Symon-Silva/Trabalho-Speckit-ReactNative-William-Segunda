@@ -193,14 +193,31 @@ export async function salvarPartida(partida: Partida): Promise<void> {
 }
 
 
+
 export async function excluirPartida(id: string): Promise<void> {
   const bruto = await AsyncStorage.getItem(CHAVE_HISTORICO);
-  if (bruto === null) { return; }
-  const dados = JSON.parse(bruto);
-  if (!Array.isArray(dados)) { return; }
-  const filtrados = dados.filter((item: any) => {
-    if (typeof item !== " object\ || item === null) { return false; }
- return item.id !== id;
- });
- await AsyncStorage.setItem(CHAVE_HISTORICO, JSON.stringify(filtrados));
+
+  if (bruto === null) {
+    return;
+  }
+
+  const dados: unknown = JSON.parse(bruto);
+
+  if (!Array.isArray(dados)) {
+    return;
+  }
+
+  const filtrados = dados.filter(
+    (item) =>
+      typeof item === 'object' &&
+      item !== null &&
+      'id' in item &&
+      item.id !== id,
+  );
+
+  await AsyncStorage.setItem(
+    CHAVE_HISTORICO,
+    JSON.stringify(filtrados),
+  );
 }
+

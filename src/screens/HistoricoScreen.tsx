@@ -12,6 +12,7 @@ import { useFocusEffect } from '@react-navigation/native';
 
 import Botao from '../components/Botao';
 import EscudoTime from '../components/EscudoTime';
+// eslint-disable-next-line import/namespace
 import { carregarHistorico, excluirPartida } from '../services/storage';
 import { Pressable } from 'react-native';
 import Dialogo from '../components/Dialogo';
@@ -68,19 +69,49 @@ export default function HistoricoScreen() {
     }, [carregar]),
   );
 
+  
   const renderItem: ListRenderItem<Partida> = ({ item }) => {
     const [casa, fora] = item.participantes;
+
+    const eventosGols = item.eventosGols ?? [];
+
     return (
       <View style={styles.item}>
         <Text style={styles.itemData}>
           {new Date(item.finalizadaEm).toLocaleDateString('pt-BR')}
         </Text>
+
         <LinhaTime participante={casa} gols={item.gols[casa.id] ?? 0} />
         <View style={styles.divisor} />
         <LinhaTime participante={fora} gols={item.gols[fora.id] ?? 0} />
+
+        {eventosGols.length > 0 && (
+          <View style={styles.eventosGols}>
+            <Text style={styles.eventosTitulo}>Gols da partida</Text>
+
+            {[...eventosGols]
+              .sort((a, b) => a.minuto - b.minuto)
+              .map((evento, indice) => {
+                const participante = item.participantes.find(
+                  (time) => time.id === evento.participanteId,
+                );
+
+                if (!participante) {
+                  return null;
+                }
+
+                return (
+                  <Text key={`${evento.participanteId}-${evento.minuto}-${indice}`} style={styles.eventoGol}>
+                    ⚽ {evento.minuto}′ — {participante.nome}
+                  </Text>
+                );
+              })}
+          </View>
+        )}
       </View>
     );
   };
+
 
   if (estado === 'carregando') {
     return (
@@ -242,4 +273,22 @@ const styles = StyleSheet.create({
     marginVertical: espacamentos.sm,
     marginLeft: 28 + espacamentos.md,
   },
+  
+  eventosGols: {
+    marginTop: espacamentos.md,
+    paddingTop: espacamentos.sm,
+    borderTopWidth: 1,
+    borderTopColor: cores.borda,
+  },
+  eventosTitulo: {
+    ...tipografia.subtitulo,
+    marginBottom: espacamentos.xs,
+    fontWeight: '700',
+  },
+  eventoGol: {
+    ...tipografia.legenda,
+    color: cores.texto,
+    marginTop: espacamentos.xs,
+  },
+
 });
